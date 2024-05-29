@@ -22,6 +22,9 @@ struct Message(Serializable, DeSerializable):
 
     fn deserialize(inout self, bytes: Bytes):
         pass
+    
+    fn __iter__(inout self):
+        pass
 
 struct Field[T: ValueType](Serializable, DeSerializable):
     var name: String
@@ -57,7 +60,8 @@ struct LEN(ValueType, Serializable, DeSerializable):
     pass
 
 fn serialize[T: ProtoBuf](owned model: T):
-    ...
+    for i in model:
+
 
 ############## Bit manupulation
 fn bit_mod[byte: Int8](value: Int8) -> Bool:
