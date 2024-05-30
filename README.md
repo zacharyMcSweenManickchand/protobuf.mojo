@@ -17,6 +17,6 @@ Basics:
     - [ ] Test Happy Vally
     - [ ] Test Overflowing bytes
 - [ ] Test String type
-    - [ ] Test Happy Vally
+    - [x] Test Happy Vally
     - [ ] Test Overflowing bytes
 - [ ] Test Invalid/Unknown type
