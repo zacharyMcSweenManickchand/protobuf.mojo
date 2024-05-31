@@ -11,6 +11,7 @@ fn test_string_serialization() raises:
     }
     .
     """
+    print("test_string_serialization()")
     var serialization = serialize(2, String("testing"))
 
     # View Bytes inside the array
@@ -31,6 +32,7 @@ fn test_byte_serialization() raises:
     """
     Testing Byte Serialization.
     """
+    print("test_byte_serialization()")
     var serialization = serialize(2, Bytes(123, 23, 32, 89))
 
     # View Bytes inside the array
@@ -48,6 +50,7 @@ fn test_uint64_serialization() raises:
     """
     Testing UInt64 Serialization.
     """
+    print("test_uint64_serialization()")
     var serialization = serialize(1, UInt64(0x34))
 
     # View Bytes inside the array
@@ -65,6 +68,7 @@ fn test_uint64_serialization_2() raises:
     """
     Testing UInt64 Serialization.
     """
+    print("test_uint64_serialization_2()")
     var serialization = serialize(1, UInt64(500))
 
     # View Bytes inside the array
@@ -83,6 +87,7 @@ fn test_large_int64_serialization() raises:
     This test checks if a unsigned interger that uses the first bit.
     Testing the overflow for `10000000 10000000 10000000`.
     """
+    print("test_large_int64_serialization()")
     var serialization = serialize(1, UInt64(8421504))
 
     # View Bytes inside the array
@@ -100,6 +105,7 @@ fn test_large_int64_serialization_2() raises:
     This test checks if a unsigned interger that uses the first bit.
     Testing the overflow for `11111111 11111111`.
     """
+    print("test_large_int64_serialization_2()")
     var serialization = serialize(1, UInt64(65535))
 
     # View Bytes inside the array
@@ -117,6 +123,7 @@ fn test_larger_int64_serialization() raises:
     """
     This test checks if a unsigned interger that uses the first bit.
     """
+    print("test_larger_int64_serialization")
     var serialization = serialize(1, UInt64(9223372036854775807))
 
     # View Bytes inside the array
@@ -125,7 +132,7 @@ fn test_larger_int64_serialization() raises:
     print()
 
     var expected_output = Bytes(
-        0x08, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01
+        0x08, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xc7F
     )
     assert_equal(len(serialization), len(expected_output))
     for i in range(len(expected_output)):

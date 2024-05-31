@@ -26,11 +26,8 @@ fn serialize_var_int[size: Int8](tag: Int8, owned value: Bytes) -> Bytes:
     # Need to loop throught and change the first bit to 1 or 0
     reject_null_bytes_in_front(value)
     for i in range(len(value)):
-        print("Before", value[i])
         value[i] ^= 0b10000000
-        print("After", value[i])
     value[len(value) - 1] ^= 0b10000000
-    print("After Again", value[len(value) - 1])
 
     # little endian
     # value.reverse()
@@ -50,29 +47,18 @@ fn serialize(tag: Int8, value: Bytes) -> Bytes:
 fn serialize(tag: Int8, value: UInt64) -> Bytes:
     var list = Bytes()
     alias SIZE_OF_VARIABLE = 64
-    alias SIZE_OF_BYTE = 8
-    alias SIZE_OF_READ_BYTE = SIZE_OF_BYTE - 1 # Because we are removing the msb
+    alias SIZE_OF_BYTE = 8 - 1  # Because we are removing the msb
 
     # This is reversed
-    alias byte_split_range = Int8(SIZE_OF_VARIABLE / SIZE_OF_READ_BYTE) #+ SIZE_OF_VARIABLE % SIZE_OF_READ_BYTE
-    for i in range(
-       byte_split_range 
-    ):
-        var is_overflowing: Bool = False
-
-        var num = (value >> (SIZE_OF_READ_BYTE * i))  # & 0XFF
+    # alias byte_split_range = Int8(SIZE_OF_VARIABLE / SIZE_OF_BYTE) #+ SIZE_OF_VARIABLE % SIZE_OF_BYTE
+    for i in range((SIZE_OF_VARIABLE / SIZE_OF_BYTE)):
+        var num = value >> ((SIZE_OF_BYTE * i))
         var int8 = num.cast[DType.int8]()
 
+
         if int8 < 0:
-            print("Uses msb", 0b11111111 - (128 * (i - 1)))
-            int8 &= 0b01111111 #0b11111111 - (128 * (1))#i - 1))
-        print("Overflow", Int8(SIZE_OF_VARIABLE/SIZE_OF_BYTE), byte_split_range, i)
-        if Int8(SIZE_OF_VARIABLE/SIZE_OF_BYTE) != byte_split_range and int8 == 0x7f and Int8(i) == byte_split_range-1:
-            # This should be a rare case were the memory size overflows.
-            is_overflowing = True
+            int8 ^= 0b10000000
         print(hex(value), "->", hex(num), "=", hex(int8))
         list.append(int8)
-        if is_overflowing:
-            list.append(Int8(1))
 
-    return serialize_var_int[SIZE_OF_VARIABLE / SIZE_OF_READ_BYTE](tag, list)
+    return serialize_var_int[SIZE_OF_VARIABLE / SIZE_OF_BYTE](tag, list)
