@@ -1,8 +1,6 @@
 from protobuf import Bytes
 
 
-# The tag is actually starts at `000`
-# So if the Tag id is 2 is equal to `001`
 fn serialize_len(tag: Int8, owned value: Bytes) -> Bytes:
     value.insert(0, ((tag) << 3) ^ 0x02)
     value.insert(1, len(value) - 1)
@@ -12,18 +10,15 @@ fn serialize_len(tag: Int8, owned value: Bytes) -> Bytes:
 fn reject_null_bytes_in_front(inout arr: Bytes):
     """
     This function reject the 0x00 bytes that are in the front of the array.
-    Since the array is backward alreadu the loop is reversed.
+    Since the array is backward already the loop is reversed.
     """
-    print(arr[0])
     var index = len(arr) - 1
     while index > 0 and arr[index] == 0x00:
         _ = arr.pop(index)
         index -= 1
 
 
-# Think it simply an overflow of bits with the msb behing inserted (if unsigned)
-fn serialize_var_int[size: Int8](tag: Int8, owned value: Bytes) -> Bytes:
-    # Need to loop throught and change the first bit to 1 or 0
+fn serialize_var_int(tag: Int8, owned value: Bytes) -> Bytes:
     reject_null_bytes_in_front(value)
     for i in range(len(value)):
         value[i] ^= 0b10000000
@@ -44,21 +39,66 @@ fn serialize(tag: Int8, value: Bytes) -> Bytes:
     return serialize_len(tag, value)
 
 
+fn serialize(tag: Int8, value: Bool) -> Bytes:
+    return serialize_var_int(tag, Bytes(1 if value else 0))
+
+
+# Not supported in the language yet
+# fn serialize(tag: Int8, value: Enum) -> Bytes:
+#     pass
+
+
 fn serialize(tag: Int8, value: UInt64) -> Bytes:
     var list = Bytes()
     alias SIZE_OF_VARIABLE = 64
     alias SIZE_OF_BYTE = 8 - 1  # Because we are removing the msb
 
     # This is reversed
-    # alias byte_split_range = Int8(SIZE_OF_VARIABLE / SIZE_OF_BYTE) #+ SIZE_OF_VARIABLE % SIZE_OF_BYTE
     for i in range((SIZE_OF_VARIABLE / SIZE_OF_BYTE)):
         var num = value >> ((SIZE_OF_BYTE * i))
         var int8 = num.cast[DType.int8]()
 
-
         if int8 < 0:
             int8 ^= 0b10000000
-        print(hex(value), "->", hex(num), "=", hex(int8))
+        # print(hex(value), "->", hex(num), "=", hex(int8))
         list.append(int8)
 
-    return serialize_var_int[SIZE_OF_VARIABLE / SIZE_OF_BYTE](tag, list)
+    return serialize_var_int(tag, list)
+
+
+fn serialize(tag: Int8, value: UInt32) -> Bytes:
+    pass
+
+
+fn serialize(tag: Int8, value: UInt16) -> Bytes:
+    pass
+
+
+fn serialize(tag: Int8, value: UInt8) -> Bytes:
+    pass
+
+
+fn serialize(tag: Int8, value: Int64) -> Bytes:
+    pass
+
+
+fn serialize(tag: Int8, value: Int32) -> Bytes:
+    pass
+
+
+fn serialize(tag: Int8, value: Int16) -> Bytes:
+    # If their no way to do this just act its a `Int32`
+    pass
+
+
+fn serialize(tag: Int8, value: Int8) -> Bytes:
+    # If their no way to do this just act its a `Int32`
+    pass
+
+
+fn serialize_fixed(tag: Int8, value: Int64) -> Bytes:
+    pass
+
+
+fn serialize_fixed(tag: Int8, value: Int32) -> Bytes:
+    pass

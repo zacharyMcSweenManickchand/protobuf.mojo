@@ -17,5 +17,5 @@ Basics:
 - [ ] Test Var Int value type
     - [x] Test Normal number
     - [ ] Test Signed number
-    - [ ] Test Unsigned number that uses the mvb
+    - [x] Test Unsigned number that uses the mvb
 - [ ] Test Invalid/Unknown type

@@ -100,6 +100,7 @@ fn test_large_int64_serialization() raises:
     for i in range(len(expected_output)):
         assert_equal(serialization[i], expected_output[i])
 
+
 fn test_large_int64_serialization_2() raises:
     """
     This test checks if a unsigned interger that uses the first bit.
@@ -132,12 +133,52 @@ fn test_larger_int64_serialization() raises:
     print()
 
     var expected_output = Bytes(
-        0x08, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xc7F
+        0x08, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xC7F
     )
     assert_equal(len(serialization), len(expected_output))
     for i in range(len(expected_output)):
-        print(serialization[i] ^ 0b10000000, expected_output[i] ^ 0b10000000)
-        assert_equal(serialization[i] ^ 0b10000000, expected_output[i] ^ 0b10000000)
+        print(serialization[i], expected_output[i])
+        assert_equal(serialization[i], expected_output[i])
+
+
+fn test_bool_serialization() raises:
+    """
+    This function test the boolean encoding.
+    Note: the implementation is probably incorrect since a the boolean takes a whole byte.
+    """
+    print("test_bool_serialization()")
+    var serialization = serialize(1, True)
+
+    # View Bytes inside the array
+    for i in range(len(serialization)):
+        print(serialization[i], hex(serialization[i]))
+    print()
+
+    var expected_output = Bytes(0x08, 0x01)
+    assert_equal(len(serialization), len(expected_output))
+    for i in range(len(expected_output)):
+        print(serialization[i], expected_output[i])
+        assert_equal(serialization[i], expected_output[i])
+
+
+fn test_bool_serialization_false() raises:
+    """
+    This function test the boolean encoding.
+    Note: the implementation is probably incorrect since a the boolean takes a whole byte.
+    """
+    print("test_bool_serialization_false()")
+    var serialization = serialize(1, False)
+
+    # View Bytes inside the array
+    for i in range(len(serialization)):
+        print(serialization[i], hex(serialization[i]))
+    print()
+
+    var expected_output = Bytes(0x08, 0x00)
+    assert_equal(len(serialization), len(expected_output))
+    for i in range(len(expected_output)):
+        print(serialization[i], expected_output[i])
+        assert_equal(serialization[i], expected_output[i])
 
 
 fn main() raises:
@@ -148,3 +189,5 @@ fn main() raises:
     test_large_int64_serialization()
     test_large_int64_serialization_2()
     test_larger_int64_serialization()
+    test_bool_serialization()
+    test_bool_serialization_false()
