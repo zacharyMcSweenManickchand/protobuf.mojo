@@ -42,7 +42,8 @@ fn test_byte_serialization() raises:
     assert_equal(len(serialization), len(expected_output))
     for i in range(len(expected_output)):
         assert_equal(serialization[i], expected_output[i])
-    
+
+
 fn test_uint64_serialization() raises:
     """
     Testing UInt64 Serialization.
@@ -59,6 +60,7 @@ fn test_uint64_serialization() raises:
     for i in range(len(expected_output)):
         assert_equal(serialization[i], expected_output[i])
 
+
 fn test_uint64_serialization_2() raises:
     """
     Testing UInt64 Serialization.
@@ -66,21 +68,21 @@ fn test_uint64_serialization_2() raises:
     var serialization = serialize(1, UInt64(500))
 
     # View Bytes inside the array
-    for i in range(len(serialization)):
-        print(serialization[i], hex(serialization[i]))
-    print()
+    # for i in range(len(serialization)):
+    #     print(serialization[i], hex(serialization[i]))
+    # print()
 
-    var expected_output = Bytes(0x08, 0xf4, 0x03)
+    var expected_output = Bytes(0x08, 0xF4, 0x03)
     assert_equal(len(serialization), len(expected_output))
     for i in range(len(expected_output)):
         assert_equal(serialization[i], expected_output[i])
 
+
 fn test_large_int64_serialization() raises:
     """
     This test checks if a unsigned interger that uses the first bit.
+    Testing the overflow for `10000000 10000000 10000000`.
     """
-    # I think this problem is why the `I64` and `I32` exists.
-    # Other than that the buts whould have to be shifted
     var serialization = serialize(1, UInt64(8421504))
 
     # View Bytes inside the array
@@ -93,12 +95,28 @@ fn test_large_int64_serialization() raises:
     for i in range(len(expected_output)):
         assert_equal(serialization[i], expected_output[i])
 
+fn test_large_int64_serialization_2() raises:
+    """
+    This test checks if a unsigned interger that uses the first bit.
+    Testing the overflow for `11111111 11111111`.
+    """
+    var serialization = serialize(1, UInt64(65535))
+
+    # View Bytes inside the array
+    for i in range(len(serialization)):
+        print(serialization[i], hex(serialization[i]))
+    print()
+
+    var expected_output = Bytes(0x08, 0xFF, 0xFF, 0x03)
+    assert_equal(len(serialization), len(expected_output))
+    for i in range(len(expected_output)):
+        assert_equal(serialization[i], expected_output[i])
+
+
 fn test_larger_int64_serialization() raises:
     """
     This test checks if a unsigned interger that uses the first bit.
     """
-    # I think this problem is why the `I64` and `I32` exists.
-    # Other than that the buts whould have to be shifted
     var serialization = serialize(1, UInt64(9223372036854775807))
 
     # View Bytes inside the array
@@ -106,10 +124,13 @@ fn test_larger_int64_serialization() raises:
         print(serialization[i], hex(serialization[i]))
     print()
 
-    var expected_output = Bytes(0x08, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01)
+    var expected_output = Bytes(
+        0x08, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01
+    )
     assert_equal(len(serialization), len(expected_output))
     for i in range(len(expected_output)):
-        assert_equal(serialization[i], expected_output[i])
+        print(serialization[i] ^ 0b10000000, expected_output[i] ^ 0b10000000)
+        assert_equal(serialization[i] ^ 0b10000000, expected_output[i] ^ 0b10000000)
 
 
 fn main() raises:
@@ -118,4 +139,5 @@ fn main() raises:
     test_uint64_serialization()
     test_uint64_serialization_2()
     test_large_int64_serialization()
+    test_large_int64_serialization_2()
     test_larger_int64_serialization()
