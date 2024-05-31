@@ -9,14 +9,13 @@ Basics:
 ---
 - [ ] Test I32 value type
     - [ ] Test Happy Vally
-    - [ ] Test Overflowing bytes
 - [ ] Test I64 value type
     - [ ] Test Happy Vally
-    - [ ] Test Overflowing bytes
 - [ ] Test LEN value type
-    - [x] Test Happy Vally
-    - [ ] Test Overflowing bytes
-- [ ] Test String type
-    - [x] Test Happy Vally
-    - [ ] Test Overflowing bytes
+    - [x] Test Byte type
+    - [x] Test String type
+- [ ] Test Var Int value type
+    - [x] Test Normal number
+    - [ ] Test Signed number
+    - [ ] Test Unsigned number that uses the mvb
 - [ ] Test Invalid/Unknown type
