@@ -26,20 +26,6 @@ struct Message(Serializable, DeSerializable):
     fn __iter__(inout self):
         pass
 
-struct Field[T: ValueType](Serializable, DeSerializable):
-    var name: String
-    var tag: Int8 #Should be 3 bytes
-    #var value: T#VarInt or I32 or I64 or LEN
-
-    fn __init__(inout self, name: String, tag: Int8):
-        self.name = name
-        self.tag = tag
-        #self.value = value
-    
-    fn serialize(inout self):
-        pass
-
-
 trait ValueType:
     pass
 
@@ -59,21 +45,10 @@ struct I64(ValueType, Serializable, DeSerializable):
 struct LEN(ValueType, Serializable, DeSerializable):
     pass
 
+##################
 fn serialize[T: ProtoBuf](owned model: T):
     for i in model:
-
-
-############## Bit manupulation
-fn bit_mod[byte: Int8](value: Int8) -> Bool:
-    return value % byte > 0
-
-# Is x bit 1 (True) or 0 (False)
-fn bit_location_value[index: Int8](byte: Int8) raises -> Bool:
-    if index < 0 or index > 8:
-        raise Error("Out of range")
-    return bit_mod[256 / (1 + index)](byte)
-
-##################
+        pass
 
 fn deserialize[T: ProtoBuf](inout model: T, owned bytes: Bytes):
     for cursor in range(len(bytes)):
@@ -87,5 +62,26 @@ fn __dict__[T: ProtoBuf](borrowed model: T):
 trait ProtoBuf:
     ...
 
+struct Model(ProtoBuf):
+    var fields: List[Field]
+
+@value
+struct Field[T:CollectionElement]:
+    var index: Int8
+    var name: String
+    var value: T
+
+    fn __init__(inout self, index: Int8, name: String, value: T):
+        self.index = index
+        self.name = name
+        self.value = value
+
 fn main():
-    pass
+    var f = Field[String](0, "First Field", "Value of Filed")
+    var fields = Tuple(
+        Field[String](0, "First Field", "Value of Filed"),
+        Field[Int8](1, "Second Field", 2)
+    )
+    print(f.index, f.name, f.value)
+    print(fields[0].index, fields[0].name, fields[0].value)
+    print(fields[1].index, fields[1].name, fields[1].value)
